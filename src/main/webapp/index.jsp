@@ -6,6 +6,8 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <html>
   <head>
     <title>Goodenough's list</title>
@@ -13,8 +15,42 @@
   <body>
     <h1>Welcome to Hell!</h1>
     <h3>Last ads:</h3>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Description</th>
+        <th>Date</th>
+      </tr>
+
+      <c:forEach items="${ requestScope.ads }" var="ad">
+        <tr>
+          <td><c:out value="${ad.title}" /></td>
+          <td><c:out value="${ad.price}" /></td>
+          <td><c:out value="${ad.contents}" /></td>
+          <td><c:out value="${ad.date}" /></td>
+        </tr>
+      </c:forEach>
+    </table>
 
     <h3>Pending ads:</h3>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Description</th>
+        <th>Date</th>
+      </tr>
+
+      <c:forEach items="${ applicationScope.pendingAds }" var="ad">
+        <tr>
+          <td><c:out value="${ad.title}" /></td>
+          <td><c:out value="${ad.price}" /></td>
+          <td><c:out value="${ad.contents}" /></td>
+          <td><c:out value="${ad.date}" /></td>
+        </tr>
+      </c:forEach>
+    </table>
 
     <h3>Post a new ad:</h3>
     <form method="POST" action="/">

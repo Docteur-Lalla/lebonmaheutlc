@@ -1,5 +1,7 @@
 package fr.istic.m2;
 
+import com.googlecode.objectify.ObjectifyService;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,20 +15,23 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "Adboard", value = "/")
 public class AdboardServlet extends HttpServlet {
+    static {
+        ObjectifyService.register(Advertisement.class);
+    }
     @Override
     public void init(ServletConfig conf) throws ServletException {
         super.init(conf);
         ArrayList<Advertisement> ads = new ArrayList<>();
-        conf.getServletContext().setAttribute("ads", ads);
+        conf.getServletContext().setAttribute("pendingAds", ads);
     }
 
     @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        List<Advertisement> ads =
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        List<Advertisement> pendingAds =
                 (List<Advertisement>) this
                         .getServletConfig()
                         .getServletContext()
-                        .getAttribute("ads");
+                        .getAttribute("pendingAds");
 
         String title = (String) req.getParameter("ad-title");
         int price = Integer.parseInt(req.getParameter("ad-price"));
@@ -36,14 +41,21 @@ public class AdboardServlet extends HttpServlet {
         if(title != null && contents != null) {
             System.out.println(title + ": " + contents);
             Advertisement ad = new Advertisement(title, price, contents, today);
-            ads.add(ad);
+            pendingAds.add(ad);
+            this.getServletConfig().getServletContext().setAttribute("pendingAds", pendingAds);
 
-            resp.sendRedirect("/index.jsp");
+            List<Advertisement> ads = ObjectifyService.ofy().load().type(Advertisement.class).list();
+            req.setAttribute("ads", ads);
+
+            this.getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
         }
     }
 
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.sendRedirect("/index.jsp");
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        List<Advertisement> ads = ObjectifyService.ofy().load().type(Advertisement.class).list();
+        req.setAttribute("ads", ads);
+
+        this.getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
     }
 }

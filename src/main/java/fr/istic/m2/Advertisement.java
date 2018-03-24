@@ -15,8 +15,8 @@ public class Advertisement {
     @Index public String contents;
     @Index public Date date;
 
-    static {
-        ObjectifyService.register(Advertisement.class);
+    public Advertisement() {
+
     }
 
     public Advertisement(String title, int price, String contents, Date date) {
