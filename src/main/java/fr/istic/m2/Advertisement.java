@@ -1,17 +1,23 @@
 package fr.istic.m2;
 
+import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 
 import java.util.Date;
 
 @Entity
 public class Advertisement {
-    @Id private Long id;
-    private String title;
-    private int price;
-    private String contents;
-    private Date date;
+    @Id public Long id;
+    @Index public String title;
+    @Index public int price;
+    @Index public String contents;
+    @Index public Date date;
+
+    static {
+        ObjectifyService.register(Advertisement.class);
+    }
 
     public Advertisement(String title, int price, String contents, Date date) {
         this.title = title;
