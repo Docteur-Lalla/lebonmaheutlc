@@ -15,14 +15,20 @@ import java.util.List;
 public class PersistServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        List<Advertisement> ads =
-                (List<Advertisement>) this
-                        .getServletConfig()
-                        .getServletContext()
-                        .getAttribute("pendingAds");
+        String id = request.getParameter("ad-delete-id");
 
-        ObjectifyService.ofy().save().entities(ads).now();
-        this.getServletConfig().getServletContext().setAttribute("pendingAds", new ArrayList<Advertisement>());
+        if(id == null) {
+            List<Advertisement> ads =
+                    (List<Advertisement>) this
+                            .getServletConfig()
+                            .getServletContext()
+                            .getAttribute("pendingAds");
+
+            ObjectifyService.ofy().save().entities(ads).now();
+            this.getServletConfig().getServletContext().setAttribute("pendingAds", new ArrayList<Advertisement>());
+        } else {
+            ObjectifyService.ofy().delete().type(Advertisement.class).id(Long.valueOf(id)).now();
+        }
 
         response.sendRedirect("/");
     }
